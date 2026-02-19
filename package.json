@@ -1,8 +1,8 @@
 {
   "name": "wb-tiktok",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "type": "module",
   "devDependencies": {
-    "wrangler": "^4.0.0"
+    "wrangler": "^4.66.0"
   }
 }
