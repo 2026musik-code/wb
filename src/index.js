@@ -1,7 +1,7 @@
 /**
  * WB TikTok - Modern & Luxurious TikTok Clone for Cloudflare Workers
- * Enhanced Data Connectivity & Client Debugging
- * Updated by AGEN ALENA NOVIANTI
+ * Final Stability Version (Anti-Build Error)
+ * Optimized by AGEN ALENA NOVIANTI
  */
 
 export default {
@@ -9,30 +9,27 @@ export default {
     const url = new URL(request.url);
 
     // API Proxying Endpoint
-    if (url.pathname === "/api/feed") {
-      const apiKey = env.TIKTOK_API_KEY || "dedi131";
+    if (url.pathname === '/api/feed') {
+      const apiKey = env.TIKTOK_API_KEY || 'dedi131';
       try {
-        // Menggunakan query 'trending' agar lebih stabil mendapatkan hasil
-        const apiUrl = `https://api.ferdev.my.id/search/tiktok?query=trending&apikey=${apiKey}`;
+        const apiUrl = 'https://api.ferdev.my.id/search/tiktok?query=trending&apikey=' + apiKey;
         const apiRes = await fetch(apiUrl, {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-          }
+          headers: { 'User-Agent': 'Mozilla/5.0' }
         });
 
-        if (!apiRes.ok) throw new Error(`API status: ${apiRes.status}`);
+        if (!apiRes.ok) throw new Error('API offline');
 
-        const data = await apiRes.text();
-        return new Response(data, {
+        const data = await apiRes.json();
+        return new Response(JSON.stringify(data), {
           headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*"
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
           }
         });
       } catch (err) {
-        return new Response(JSON.stringify({ status: false, msg: err.message }), {
+        return new Response(JSON.stringify({ status: false, msg: 'API Connection Error' }), {
           status: 200,
-          headers: { "Content-Type": "application/json" }
+          headers: { 'Content-Type': 'application/json' }
         });
       }
     }
@@ -50,7 +47,7 @@ function generateHTML() {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>WB TikTok - Premium</title>
+    <title>WB TikTok - Fixed & Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -67,82 +64,75 @@ function generateHTML() {
 <body>
     <div id="app" class="video-container">
         <div id="loading" class="h-screen w-screen flex items-center justify-center bg-black">
-            <div class="flex flex-col items-center gap-4">
-                <div class="w-10 h-10 border-4 border-white/20 border-t-[#ff0050] rounded-full animate-spin"></div>
-                <p class="text-white/50 text-sm">Memuat konten...</p>
-            </div>
+            <div class="text-white/50 animate-pulse">Memuat konten premium...</div>
         </div>
     </div>
 
     <script>
         async function fetchVideos() {
             try {
-                const response = await fetch('/api/feed');
-                const result = await response.json();
-                
-                // DEBUGGING: Lihat respon API di Console (F12)
-                console.log("Raw API Result:", result);
-
-                const loader = document.getElementById('loading');
+                var response = await fetch('/api/feed');
+                var result = await response.json();
+                var loader = document.getElementById('loading');
                 if (loader) loader.remove();
 
-                // Deteksi otomatis struktur data
-                const videoData = result.result || result.data || (Array.isArray(result) ? result : null);
-                
-                if (videoData && Array.isArray(videoData) && videoData.length > 0) {
+                var videoData = result.result || result.data || (Array.isArray(result) ? result : null);
+                if (videoData && videoData.length > 0) {
                     renderVideos(videoData);
                 } else {
-                    console.warn("Struktur data tidak dikenali atau kosong:", result);
-                    document.getElementById('app').innerHTML = '<div class="text-white p-10 text-center">Data tidak ditemukan. Cek Console (F12).</div>';
+                    document.getElementById('app').innerHTML = '<div class="text-white p-10 text-center">Gagal memuat data API.</div>';
                 }
             } catch (error) {
-                console.error("Frontend Fetch Error:", error);
-                document.getElementById('app').innerHTML = '<div class="text-white p-10 text-center">Gagal memproses data API.</div>';
+                console.error('Fetch error:', error);
             }
         }
 
         function renderVideos(videos) {
-            const app = document.getElementById('app');
-            videos.forEach((video) => {
-                const card = document.createElement('div');
+            var app = document.getElementById('app');
+            videos.forEach(function(video) {
+                var card = document.createElement('div');
                 card.className = 'video-card';
                 
-                // Fallback untuk berbagai format nama properti URL video
-                const vSrc = video.video || video.play || video.url || video.video_url || '';
-                const author = video.author?.nickname || video.nickname || 'user';
-                const title = video.title || video.description || '';
+                var vSrc = video.video || video.play || video.url || '';
+                var author = video.author ? video.author.nickname : 'user';
+                var title = video.title || '';
 
                 if (!vSrc) return;
 
-                card.innerHTML = \`
-                    <video loop playsinline muted onclick="this.paused ? this.play() : this.pause()">
-                        <source src="\\${vSrc}" type="video/mp4">
-                    </video>
-                    <div class="sidebar">
-                        <div class="icon-circle"><i class="fas fa-heart"></i></div>
-                        <div class="icon-circle"><i class="fas fa-comment"></i></div>
-                        <div class="icon-circle"><i class="fas fa-share"></i></div>
-                    </div>
-                    <div class="overlay">
-                        <h3 class="font-bold text-lg">@\\${author}</h3>
-                        <p class="text-sm opacity-90">\\${title}</p>
-                    </div>\\`;
+                // Membangun HTML menggunakan Kutipan Tunggal agar aman dari build error
+                var htmlContent = '<video loop playsinline muted onclick="this.paused ? this.play() : this.pause()">';
+                htmlContent += '<source src="' + vSrc + '" type="video/mp4">';
+                htmlContent += '</video>';
+                htmlContent += '<div class="sidebar">';
+                htmlContent += '<div class="icon-circle"><i class="fas fa-heart"></i></div>';
+                htmlContent += '<div class="icon-circle"><i class="fas fa-comment"></i></div>';
+                htmlContent += '<div class="icon-circle"><i class="fas fa-share"></i></div>';
+                htmlContent += '</div>';
+                htmlContent += '<div class="overlay">';
+                htmlContent += '<h3 class="font-bold text-lg">@' + author + '</h3>';
+                htmlContent += '<p class="text-sm opacity-90">' + title + '</p>';
+                htmlContent += '</div>';
+
+                card.innerHTML = htmlContent;
                 app.appendChild(card);
             });
             setupObserver();
         }
 
         function setupObserver() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => {
-                    const v = e.target.querySelector('video');
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(e) {
+                    var v = e.target.querySelector('video');
                     if (v) {
-                        if (e.isIntersecting) v.play().catch(() => {});
+                        if (e.isIntersecting) v.play().catch(function() {});
                         else v.pause();
                     }
                 });
             }, { threshold: 0.6 });
-            document.querySelectorAll('.video-card').forEach(c => observer.observe(c));
+            
+            document.querySelectorAll('.video-card').forEach(function(c) {
+                observer.observe(c);
+            });
         }
 
         fetchVideos();
